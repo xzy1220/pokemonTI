@@ -138,6 +138,35 @@ tailwind.config = {
   /* Canvas 锐利渲染 */
   canvas { image-rendering: auto; }
 
+  /* ═══════════════════════════════════════════ */
+  /*  响应式 — 手机端适配                       */
+  /* ═══════════════════════════════════════════ */
+  @media (max-width: 640px) {
+    .container { padding: 8px; padding-top: 16px; align-items: flex-start; }
+    .pokeball { width: 72px; height: 72px; }
+    .pokeball .btn-center { width: 18px; height: 18px; border-width: 3px; }
+    .question-text { font-size: 1.05em; line-height: 1.55; }
+    .option-card { padding: 14px 12px !important; gap: 8px !important; border-radius: 14px !important; }
+    .option-card span:first-child { width: 28px !important; height: 28px !important; font-size: 0.75em !important; }
+    .progress-wrap { margin-bottom: 16px; }
+    .progress-text { font-size: 0.72em; }
+    .dim-label { width: 3.5rem !important; font-size: 0.7em !important; }
+    .btn { padding: 10px 20px !important; font-size: 0.85em !important; }
+  }
+  @media (max-width: 380px) {
+    .pokeball { width: 60px; height: 60px; }
+    .pokeball .btn-center { width: 15px; height: 15px; border-width: 2px; }
+    .question-text { font-size: 0.95em; }
+    .option-card { padding: 12px 10px !important; font-size: 0.88em !important; }
+    .option-card span:first-child { width: 24px !important; height: 24px !important; font-size: 0.7em !important; }
+    .particles { opacity: 0.4; }
+  }
+  @media (hover: none) and (pointer: coarse) {
+    .option-card:hover { transform: none !important; }
+    .option-card:active { background: #edf0ff; }
+    .btn:hover { transform: none !important; }
+  }
+
   /* 滚动条 */
   ::-webkit-scrollbar { width:6px; }
   ::-webkit-scrollbar-track { background:transparent; }
@@ -935,6 +964,7 @@ function drawPoly(ctx, cx, cy, r, n, dims, fill, stroke, lw) {
 // ============================================================
 function shareResult() {
   const r = results.top, p = r.pokemon;
+  const simPct = (Math.max(0, (1 - r.dist / 20.1) * 100)).toFixed(1);
   const dimNames = ['活力','理性','冒险','羁绊','意志'];
   const text = `🌍 Pokémon Ti 🌍\n\n✨ 我的宝可梦人格：${p[1]}（No.${String(p[0]).padStart(3,'0')}）\n🎯 匹配度：${simPct}%\n📊 人格维度：\n${dimNames.map((d, i) => `  ${d}: ${Math.round(results.userDims[i] * 10) / 10}/10`).join('\n')}\n\n😎 你也来测测你的宝可梦人格！`;
   if (navigator.clipboard) {
