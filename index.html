@@ -994,25 +994,26 @@ function showToast() {
 // ============================================================
 //  BGM
 // ============================================================
-let _bgmOn = false;
-function toggleBGM(e) {
+async function toggleBGM(e) {
   if (e) e.preventDefault();
   const btn = document.getElementById('bgmToggle');
   const audio = document.getElementById('bgmAudio');
   if (!audio || !btn) return;
 
-  if (_bgmOn) {
+  if (audio.paused) {
+    try {
+      await audio.play();
+      btn.textContent = '🎵';
+      btn.classList.add('border-secondary');
+      btn.classList.remove('border-white/20');
+    } catch (_) {
+      btn.textContent = '🔇';
+    }
+  } else {
     audio.pause();
-    _bgmOn = false;
     btn.textContent = '🔇';
     btn.classList.remove('border-secondary');
     btn.classList.add('border-white/20');
-  } else {
-    audio.play();
-    _bgmOn = true;
-    btn.textContent = '🎵';
-    btn.classList.add('border-secondary');
-    btn.classList.remove('border-white/20');
   }
 }
 
