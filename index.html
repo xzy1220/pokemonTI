@@ -265,7 +265,7 @@ tailwind.config = {
 </div>
 
 <!-- BGM -->
-<audio id="bgmAudio" src="bgm.mp3" loop preload="none"></audio>
+<audio id="bgmAudio" src="bgm.mp3" loop></audio>
 
 <button id="bgmToggle"
         class="btn btn-circle btn-ghost fixed bottom-6 right-6 z-50 w-16 h-16 text-2xl
@@ -994,35 +994,26 @@ function showToast() {
 // ============================================================
 //  BGM
 // ============================================================
-let _bgmLock = false;
+let _bgmOn = false;
 function toggleBGM(e) {
   if (e) e.preventDefault();
-  if (_bgmLock) return;
-  _bgmLock = true;
-  setTimeout(() => { _bgmLock = false; }, 500);
-
   const btn = document.getElementById('bgmToggle');
   const audio = document.getElementById('bgmAudio');
-  if (!audio || !btn) { _bgmLock = false; return; }
+  if (!audio || !btn) return;
 
-  btn.style.transform = 'scale(1.15)';
-  setTimeout(() => { btn.style.transform = ''; }, 150);
-
-  if (!audio.paused) {
+  if (_bgmOn) {
     audio.pause();
+    _bgmOn = false;
     btn.textContent = '🔇';
     btn.classList.remove('border-secondary');
     btn.classList.add('border-white/20');
-    return;
-  }
-
-  audio.play().then(() => {
+  } else {
+    audio.play();
+    _bgmOn = true;
     btn.textContent = '🎵';
     btn.classList.add('border-secondary');
     btn.classList.remove('border-white/20');
-  }).catch(() => {
-    btn.textContent = '🔇';
-  });
+  }
 }
 
 // ============================================================
