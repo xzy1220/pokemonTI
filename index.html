@@ -994,17 +994,21 @@ function showToast() {
 // ============================================================
 //  BGM
 // ============================================================
+let _bgmLock = false;
 function toggleBGM(e) {
   if (e) e.preventDefault();
+  if (_bgmLock) return;
+  _bgmLock = true;
+  setTimeout(() => { _bgmLock = false; }, 500);
+
   const btn = document.getElementById('bgmToggle');
   const audio = document.getElementById('bgmAudio');
-  if (!audio || !btn) return;
+  if (!audio || !btn) { _bgmLock = false; return; }
 
   btn.style.transform = 'scale(1.15)';
   setTimeout(() => { btn.style.transform = ''; }, 150);
 
   if (!audio.paused) {
-    // 正在播放 → 暂停
     audio.pause();
     btn.textContent = '🔇';
     btn.classList.remove('border-secondary');
@@ -1012,13 +1016,11 @@ function toggleBGM(e) {
     return;
   }
 
-  // 当前暂停 → 播放（在 click 同步上下文内调用 play，符合移动端策略）
   audio.play().then(() => {
     btn.textContent = '🎵';
     btn.classList.add('border-secondary');
     btn.classList.remove('border-white/20');
   }).catch(() => {
-    // 移动端首次交互前可能失败，点第二次就好了
     btn.textContent = '🔇';
   });
 }
