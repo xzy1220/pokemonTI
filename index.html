@@ -998,25 +998,56 @@ function showToast() {
 //  BGM
 // ============================================================
 function toggleBGM(e) {
-  if (e) e.preventDefault();
+  if (e) { e.preventDefault(); e.stopPropagation(); }
   const btn = document.getElementById('bgmToggle');
   const audio = document.getElementById('bgmAudio');
-  if (!audio) return;
+  if (!audio || !btn) return;
 
   btn.style.transform = 'scale(1.15)';
   setTimeout(() => { btn.style.transform = ''; }, 150);
 
-  if (audio.paused) {
-    audio.play().then(() => {
-      btn.textContent = '🎵';
-      btn.classList.add('bgm-fab', 'border-secondary');
-      btn.classList.remove('border-white/20');
-    }).catch(() => {});
-  } else {
+  if (!audio.paused) {
     audio.pause();
     btn.textContent = '🔇';
-    btn.classList.remove('bgm-fab', 'border-secondary');
+    btn.classList.remove('border-secondary');
     btn.classList.add('border-white/20');
+    return;
+  }
+
+  // Trying to play
+  btn.textContent = '⏳';
+
+  // If audio never loaded, load it now
+  if (audio.readyState === 0) audio.load();
+
+  const onReady = () => {
+    audio.removeEventListener('canplay', onReady);
+    audio.play().then(() => {
+      btn.textContent = '🎵';
+      btn.classList.add('border-secondary');
+      btn.classList.remove('border-white/20');
+    }).catch(() => {
+      btn.textContent = '🔇';
+    });
+  };
+
+  if (audio.readyState >= 3) {
+    // Already loaded, play directly
+    audio.play().then(() => {
+      btn.textContent = '🎵';
+      btn.classList.add('border-secondary');
+      btn.classList.remove('border-white/20');
+    }).catch(() => {
+      btn.textContent = '🔇';
+    });
+  } else {
+    // Wait for audio to load before playing
+    audio.addEventListener('canplay', onReady, {once: true});
+    // Timeout after 8 seconds
+    setTimeout(() => {
+      audio.removeEventListener('canplay', onReady);
+      if (audio.paused) btn.textContent = '🔇';
+    }, 8000);
   }
 }
 
