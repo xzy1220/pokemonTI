@@ -994,10 +994,8 @@ function showToast() {
 // ============================================================
 //  BGM
 // ============================================================
-let _bgmBusy = false;
 function toggleBGM(e) {
-  if (e) { e.preventDefault(); e.stopPropagation(); }
-  if (_bgmBusy) return;
+  if (e) e.preventDefault();
   const btn = document.getElementById('bgmToggle');
   const audio = document.getElementById('bgmAudio');
   if (!audio || !btn) return;
@@ -1006,6 +1004,7 @@ function toggleBGM(e) {
   setTimeout(() => { btn.style.transform = ''; }, 150);
 
   if (!audio.paused) {
+    // 正在播放 → 暂停
     audio.pause();
     btn.textContent = '🔇';
     btn.classList.remove('border-secondary');
@@ -1013,29 +1012,15 @@ function toggleBGM(e) {
     return;
   }
 
-  // Lock: prevent rapid-fire calls during load/play transition
-  _bgmBusy = true;
-  btn.textContent = '⏳';
-  if (audio.readyState === 0) audio.load();
-
-  const playNow = () => {
-    audio.play().then(() => {
-      btn.textContent = '🎵';
-      btn.classList.add('border-secondary');
-      btn.classList.remove('border-white/20');
-    }).catch(() => { btn.textContent = '🔇'; })
-      .finally(() => { _bgmBusy = false; });
-  };
-
-  if (audio.readyState >= 3) { playNow(); }
-  else {
-    const onReady = () => { audio.removeEventListener('canplay', onReady); playNow(); };
-    audio.addEventListener('canplay', onReady, {once: true});
-    setTimeout(() => {
-      audio.removeEventListener('canplay', onReady);
-      if (_bgmBusy) { btn.textContent = '🔇'; _bgmBusy = false; }
-    }, 8000);
-  }
+  // 当前暂停 → 播放（在 click 同步上下文内调用 play，符合移动端策略）
+  audio.play().then(() => {
+    btn.textContent = '🎵';
+    btn.classList.add('border-secondary');
+    btn.classList.remove('border-white/20');
+  }).catch(() => {
+    // 移动端首次交互前可能失败，点第二次就好了
+    btn.textContent = '🔇';
+  });
 }
 
 // ============================================================
