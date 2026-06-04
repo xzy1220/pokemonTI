@@ -2,6 +2,11 @@
 <html lang="zh-CN" data-theme="pokemon">
 <head>
 <meta charset="UTF-8">
+<meta name="theme-color" content="#0f0c29">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<meta name="description" content="Pokémon Ti - 宝可梦人格测试">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pokémon Ti — 测试你的宝可梦人格</title>
 
@@ -12,6 +17,7 @@
 tailwind.config = {
   theme: {
     extend: {
+      fontDisplay: 'swap',
       fontFamily: {
         sans: ['"Segoe UI"', '"PingFang SC"', '"Microsoft YaHei"', 'sans-serif'],
       },
@@ -253,11 +259,13 @@ tailwind.config = {
 </div>
 
 <!-- BGM -->
-<audio id="bgmAudio" src="bgm.mp3" loop preload="auto"></audio>
+<audio id="bgmAudio" src="bgm.mp3" loop preload="none"></audio>
 
-<button id="bgmToggle" class="btn btn-circle btn-ghost fixed bottom-6 right-6 z-50 w-14 h-14 text-2xl
-       bg-neutral/80 backdrop-blur-md border-2 border-white/20 text-white shadow-xl
-       hover:border-secondary hover:shadow-secondary/30 transition-all"
+<button id="bgmToggle"
+        class="btn btn-circle btn-ghost fixed bottom-6 right-6 z-50 w-16 h-16 text-2xl
+               bg-neutral/80 backdrop-blur-md border-2 border-white/20 text-white shadow-xl
+               hover:border-secondary hover:shadow-secondary/30 transition-all active:scale-90"
+        style="touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-width:56px;min-height:56px"
         title="音乐开关" onclick="toggleBGM()">🔇</button>
 
 <!-- Toast -->
@@ -273,7 +281,7 @@ tailwind.config = {
 (function initParticles() {
   const container = document.getElementById('particles');
   const colors = ['#FFCB05','#E3350D','#3B4CCA','#78C850','#fff'];
-  for (let i = 0; i < 30; i++) {
+  const isMobile = window.innerWidth < 640; for (let i = 0; i < (isMobile ? 12 : 30); i++) {
     const p = document.createElement('div');
     p.className = 'dot';
     p.style.cssText = `
@@ -729,20 +737,19 @@ function renderResult() {
     <!-- ═══════ 档案抬头 ═══════ -->
     <div class="text-center mb-6 animate-fade-in">
       <p class="text-xs text-base-content/30 mb-1 tracking-widest">◆ 大木博士 人格分析档案 ◆</p>
-      <p class="text-[10px] text-base-content/20">档案编号 PKTI-${String(p[0]).padStart(3,'0')}　|　归档日期 ${dateStr}　|　匹配等级：${tierLabel}</p>
+      <p class="text-[10px] text-base-content/20">档案编号 PKTI-${p[0]}　|　归档日期 ${dateStr}　|　匹配等级：${tierLabel}</p>
     </div>
 
     <!-- ═══════ 宝可梦画像 ═══════ -->
-    <div class="relative mb-4 animate-fade-in">
+    <div class="relative mb-4 animate-fade-in flex justify-center">
       <img class="w-44 h-44 md:w-52 md:h-52 object-contain mx-auto drop-shadow-2xl animate-float cursor-pointer hover:scale-110 transition-transform"
-           src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${p[0]}.png"
+           src="sprites/${p[0]}.png"
            alt="${p[1]}"
-           onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p[0]}.png'"
            loading="lazy">
     </div>
 
     <h2 class="text-3xl md:text-4xl font-black mb-1 animate-fade-in bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">${p[1]}</h2>
-    <p class="text-xs text-base-content/30 font-semibold mb-2 animate-fade-in">No.${String(p[0]).padStart(3,'0')}　${types.join(' · ')}</p>
+    <p class="text-xs text-base-content/30 font-semibold mb-2 animate-fade-in">No.${p[0]}　${types.join(' · ')}</p>
 
     <!-- ═══════ 匹配度仪表 ═══════ -->
     <div class="flex items-center justify-center gap-3 mb-6 animate-fade-in">
@@ -794,7 +801,7 @@ function renderResult() {
           const np = n.pokemon;
           const npct = (Math.max(0, (1 - n.dist / 20.1) * 100)).toFixed(1);
           return '<div class="bg-base-100 rounded-xl px-3 py-3 text-center w-24 flex-shrink-0 shadow-sm">'+
-            '<img class="w-14 h-14 mx-auto object-contain" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/'+np[0]+'.png" alt="'+np[1]+'" onerror="this.src=&#39;https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/'+np[0]+'.png&#39;" loading="lazy">'+
+            '<img class="w-14 h-14 mx-auto object-contain" src="sprites/'+np[0]+'.png" alt="'+np[1]+'" loading="lazy">'+
             '<p class="text-xs font-bold mt-1 truncate">'+np[1]+'</p>'+
             '<p class="text-[10px] text-primary font-semibold">同步率 '+npct+'%</p>'+
           '</div>';
@@ -966,7 +973,7 @@ function shareResult() {
   const r = results.top, p = r.pokemon;
   const simPct = (Math.max(0, (1 - r.dist / 20.1) * 100)).toFixed(1);
   const dimNames = ['活力','理性','冒险','羁绊','意志'];
-  const text = `🌍 Pokémon Ti 🌍\n\n✨ 我的宝可梦人格：${p[1]}（No.${String(p[0]).padStart(3,'0')}）\n🎯 匹配度：${simPct}%\n📊 人格维度：\n${dimNames.map((d, i) => `  ${d}: ${Math.round(results.userDims[i] * 10) / 10}/10`).join('\n')}\n\n😎 你也来测测你的宝可梦人格！`;
+  const text = `🌍 Pokémon Ti 🌍\n\n✨ 我的宝可梦人格：${p[1]}（No.${p[0]}）\n🎯 匹配度：${simPct}%\n📊 人格维度：\n${dimNames.map((d, i) => `  ${d}: ${Math.round(results.userDims[i] * 10) / 10}/10`).join('\n')}\n\n😎 你也来测测你的宝可梦人格！`;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => showToast());
   } else {
@@ -988,11 +995,17 @@ function showToast() {
 }
 
 // ============================================================
-//  BGM — 用户上传自定义音频
+//  BGM
 // ============================================================
-function toggleBGM() {
+function toggleBGM(e) {
+  if (e) e.preventDefault();
   const btn = document.getElementById('bgmToggle');
   const audio = document.getElementById('bgmAudio');
+  if (!audio) return;
+
+  btn.style.transform = 'scale(1.15)';
+  setTimeout(() => { btn.style.transform = ''; }, 150);
+
   if (audio.paused) {
     audio.play().then(() => {
       btn.textContent = '🎵';
@@ -1021,8 +1034,8 @@ document.addEventListener('keydown', (e) => {
   if (key === 'enter' && selectedIdx >= 0) nextQuestion();
 });
 
-console.log('🌍 Pokémon Ti 已就绪 — 151只初代宝可梦等着你！');
-console.log('💡 提示：答题时可以用键盘 1-4 或 A-D 选择选项，Enter 确认');
+console.log('🌍 Pokémon Ti 已就绪 — 全1025只宝可梦档案');
+console.log('💡 键盘快捷：1-4/ABCD 选择，Enter 确认');
 </script>
 </body>
 </html>
