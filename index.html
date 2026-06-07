@@ -56,6 +56,14 @@ tailwind.config = {
           '50%': { transform: 'scale(1.03)' },
           '100%': { transform: 'scale(1)' },
         },
+        pikaRun: {
+          '0%, 100%': { transform: 'scaleX(-1) translateY(0)' },
+          '50%': { transform: 'scaleX(-1) translateY(-3px)' },
+        },
+        pikaDust: {
+          '0%': { opacity: '0.6', transform: 'scale(1) translateY(0)' },
+          '100%': { opacity: '0', transform: 'scale(0.3) translateY(-6px)' },
+        },
       }
     }
   },
@@ -138,6 +146,27 @@ tailwind.config = {
   /* BGM按钮 */
   .bgm-fab {
     animation: pulseGlow 2s ease-in-out infinite;
+  }
+
+  /* 皮卡丘奔跑 */
+  .pika-run { animation: pikaRun 0.3s ease-in-out infinite; }
+  @keyframes pikaRun {
+    0%, 100% { transform: scaleX(-1) translateY(0); }
+    50% { transform: scaleX(-1) translateY(-4px); }
+  }
+  .pika-track::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 2px;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, #d4d4d4 0 6px, transparent 6px 12px);
+  }
+  /* 终点旗帜 */
+  .finish-flag {
+    position: absolute;
+    right: 4px; bottom: 2px;
+    font-size: 18px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,.2));
   }
 
   /* Canvas 锐利渲染 */
@@ -229,13 +258,22 @@ tailwind.config = {
   <div class="screen hidden w-full max-w-xl mx-auto" id="screen-quiz">
     <div class="card bg-base-100 shadow-2xl p-6 md:p-8">
 
-      <!-- 进度 -->
-      <div class="mb-6">
-        <div class="flex justify-between text-xs font-semibold text-base-content/40 mb-2">
+      <!-- 皮卡丘奔跑进度条 -->
+      <div class="mb-4">
+        <div class="flex justify-between text-xs font-semibold text-base-content/40 mb-1">
           <span id="qLabel">第 1 / 30 题</span>
           <span id="qPercent">0%</span>
         </div>
-        <progress class="progress progress-primary w-full h-2" value="0" max="30" id="progressFill"></progress>
+        <div class="relative w-full h-12 bg-base-200/60 rounded-full overflow-hidden border border-base-300/30" id="pikaTrack">
+          <!-- 地面虚线 -->
+          <div class="absolute bottom-2 left-3 right-12 border-t-2 border-dashed border-base-content/10"></div>
+          <!-- 皮卡丘 -->
+          <img src="sprites/25.png" id="pikaRunner" alt="皮卡丘"
+               class="absolute w-8 h-8 object-contain transition-all duration-500 ease-out pika-run"
+               style="left: 0%; bottom: 6px; transform: scaleX(-1);">
+          <!-- 🚩 终点 -->
+          <span class="finish-flag">🚩</span>
+        </div>
       </div>
 
       <!-- 题号标签 -->
@@ -633,7 +671,10 @@ function renderQuestion() {
   const q = QUESTIONS[currentQ];
   document.getElementById('qLabel').textContent = `第 ${currentQ + 1} / 30 题`;
   document.getElementById('qPercent').textContent = Math.round((currentQ / 30) * 100) + '%';
-  document.getElementById('progressFill').value = currentQ;
+  // 皮卡丘奔跑位置
+  const pika = document.getElementById('pikaRunner');
+  const pct = currentQ / 30;
+  pika.style.left = `calc(${pct * 100}% - ${pct * 32}px)`;
   document.getElementById('qBadge').textContent = 'Q' + (currentQ + 1);
   document.getElementById('qText').textContent = q.q;
 
