@@ -140,9 +140,6 @@ tailwind.config = {
     animation: pulseGlow 2s ease-in-out infinite;
   }
 
-  /* 皮卡丘奔跑 */
-  /* 尘土粒子 */
-
   /* Canvas 锐利渲染 */
   canvas { image-rendering: auto; }
 
@@ -160,8 +157,7 @@ tailwind.config = {
     .progress-text { font-size: 0.72em; }
     .dim-label { width: 3.5rem !important; font-size: 0.7em !important; }
     .btn { padding: 10px 20px !important; font-size: 0.85em !important; }
-    #pikaRunner { width: 48px !important; height: 48px !important; }
-    #pikaTrack { height: 48px !important; }
+    #pikaRunner { width: 36px !important; height: 36px !important; }
     .archives-grid { grid-template-columns: repeat(3, 1fr) !important; max-width: 100%; }
     .archives-grid > * { min-width: 0; overflow: hidden; }
     .archives-grid img { width: 36px !important; height: 36px !important; }
@@ -234,28 +230,17 @@ tailwind.config = {
   <div class="screen hidden w-full max-w-xl mx-auto" id="screen-quiz">
     <div class="card bg-base-100 shadow-2xl p-6 md:p-8">
 
-      <!-- 皮卡丘奔跑进度条 -->
+      <!-- 进度条 + 皮卡丘 -->
       <div class="mb-4">
         <div class="flex justify-between text-xs font-semibold text-base-content/40 mb-1">
           <span id="qLabel">第 1 / 30 题</span>
           <span id="qPercent">0%</span>
         </div>
-        <div class="relative w-full h-16 rounded-full overflow-hidden" id="pikaTrack"
-             style="background: linear-gradient(180deg, #b8d4a0 0%, #a8c890 40%, #c4b078 60%, #b8a068 100%); border-bottom: 3px solid #7a9a60;">
-          <!-- 草地纹理 -->
-          <div class="absolute inset-0 opacity-20" style="background: repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(255,255,255,.3) 8px, rgba(255,255,255,.3) 10px);"></div>
-          <!-- 土路 -->
-          <div class="absolute bottom-0 left-0 right-0 h-8" style="background: linear-gradient(180deg, #d4c090, #c4a868); border-radius: 0 0 999px 999px;"></div>
-          <!-- 已跑过的路（暖色） -->
-          <div class="absolute bottom-0 left-0 h-8 z-10 transition-all duration-500 ease-out" id="pikaTrackFill"
-               style="width: 0%; background: linear-gradient(180deg, #e8d4a0, #d4b868); border-radius: 0 0 999px 999px;"></div>
-          <!-- 皮卡丘 -->
-          <div class="absolute bottom-1 transition-all duration-500 ease-out z-30" id="pikaWrapper" style="left: 0%;">
-            <img src="皮卡丘奔跑gif/透明背景-二次元_跑步-右1-进度条标识_爱给网_aigei_com.gif" id="pikaRunner" alt="皮卡丘"
-                 style="width: 64px; height: 64px;">
+        <div class="relative">
+          <progress class="progress progress-primary w-full h-3" value="0" max="30" id="progressFill"></progress>
+          <div class="absolute top-0 left-0 transition-all duration-500 ease-out" id="pikaWrapper" style="left: 0%; transform: translateY(-24px);">
+            <img src="皮卡丘奔跑gif/透明背景-二次元_跑步-右1-进度条标识_爱给网_aigei_com.gif" alt="皮卡丘" style="width: 48px; height: 48px;">
           </div>
-          <!-- 🚩 -->
-          <span class="absolute right-1 bottom-1 text-lg z-20" style="filter: drop-shadow(0 1px 1px rgba(0,0,0,.15));">🚩</span>
         </div>
       </div>
 
@@ -654,12 +639,11 @@ function renderQuestion() {
   const q = QUESTIONS[currentQ];
   document.getElementById('qLabel').textContent = `第 ${currentQ + 1} / 30 题`;
   document.getElementById('qPercent').textContent = Math.round((currentQ / 30) * 100) + '%';
-  // 皮卡丘奔跑位置
+  document.getElementById('progressFill').value = currentQ;
+  // 皮卡丘位置
   const pct = currentQ / 30;
   const wrapper = document.getElementById('pikaWrapper');
-  wrapper.style.left = `calc(${pct * 100}% - ${6 + pct * 68}px)`;
-  // 已过赛道
-  document.getElementById('pikaTrackFill').style.width = (pct * 100) + '%';
+  wrapper.style.left = `calc(${pct * 100}% - ${6 + pct * 50}px)`;
   document.getElementById('qBadge').textContent = 'Q' + (currentQ + 1);
   document.getElementById('qText').textContent = q.q;
 
