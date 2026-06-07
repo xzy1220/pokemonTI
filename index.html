@@ -142,19 +142,6 @@ tailwind.config = {
 
   /* 皮卡丘奔跑 */
   /* 尘土粒子 */
-  /* 里程碑小三角 */
-  .pika-dot {
-    width: 0; height: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    border-bottom: 6px solid #9aaa80;
-    transition: all 0.3s ease;
-    flex: 1;
-  }
-  .pika-dot.done {
-    border-bottom-color: #f4c542;
-    filter: drop-shadow(0 0 2px rgba(244,197,66,.4));
-  }
 
   /* Canvas 锐利渲染 */
   canvas { image-rendering: auto; }
@@ -173,7 +160,6 @@ tailwind.config = {
     .progress-text { font-size: 0.72em; }
     .dim-label { width: 3.5rem !important; font-size: 0.7em !important; }
     .btn { padding: 10px 20px !important; font-size: 0.85em !important; }
-    .pika-dot { border-left-width: 3px !important; border-right-width: 3px !important; border-bottom-width: 5px !important; }
     #pikaRunner { width: 48px !important; height: 48px !important; }
     #pikaTrack { height: 48px !important; }
     .archives-grid { grid-template-columns: repeat(3, 1fr) !important; max-width: 100%; }
@@ -263,8 +249,6 @@ tailwind.config = {
           <!-- 已跑过的路（暖色） -->
           <div class="absolute bottom-0 left-0 h-8 z-10 transition-all duration-500 ease-out" id="pikaTrackFill"
                style="width: 0%; background: linear-gradient(180deg, #e8d4a0, #d4b868); border-radius: 0 0 999px 999px;"></div>
-          <!-- 里程碑小三角 -->
-          <div class="absolute inset-x-0 bottom-9 flex px-4 z-20" id="pikaDots"></div>
           <!-- 皮卡丘 -->
           <div class="absolute bottom-1 transition-all duration-500 ease-out z-30" id="pikaWrapper" style="left: 0%;">
             <img src="皮卡丘奔跑gif/透明背景-二次元_跑步-右1-进度条标识_爱给网_aigei_com.gif" id="pikaRunner" alt="皮卡丘"
@@ -668,18 +652,6 @@ function startQuiz() {
 
 function renderQuestion() {
   const q = QUESTIONS[currentQ];
-  // 初始化皮卡丘赛道节点（仅一次）
-  if (!document.getElementById('dot0')) {
-    const dots = document.getElementById('pikaDots');
-    for (let i = 0; i < 30; i++) {
-      const dot = document.createElement('span');
-      dot.className = 'pika-dot';
-      dot.id = 'dot' + i;
-      dot.title = '第' + (i + 1) + '题';
-      dots.appendChild(dot);
-    }
-  }
-
   document.getElementById('qLabel').textContent = `第 ${currentQ + 1} / 30 题`;
   document.getElementById('qPercent').textContent = Math.round((currentQ / 30) * 100) + '%';
   // 皮卡丘奔跑位置
@@ -688,14 +660,6 @@ function renderQuestion() {
   wrapper.style.left = `calc(${pct * 100}% - ${6 + pct * 68}px)`;
   // 已过赛道
   document.getElementById('pikaTrackFill').style.width = (pct * 100) + '%';
-  // 里程碑节点
-  for (let i = 0; i < 30; i++) {
-    const dot = document.getElementById('dot' + i);
-    if (dot) {
-      if (i < currentQ) dot.classList.add('done');
-      else dot.classList.remove('done');
-    }
-  }
   document.getElementById('qBadge').textContent = 'Q' + (currentQ + 1);
   document.getElementById('qText').textContent = q.q;
 
