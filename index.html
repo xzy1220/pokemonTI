@@ -150,15 +150,15 @@ tailwind.config = {
 
   /* 皮卡丘奔跑 */
   .pika-run-sprite {
-    animation: pikaBounce 0.25s ease-in-out infinite;
+    animation: pikaBounce 0.45s ease-in-out infinite;
   }
   @keyframes pikaBounce {
     0%, 100% { transform: scaleX(-1) translateY(0); }
-    15%  { transform: scaleX(-1) translateY(-6px) rotate(-4deg); }
-    35%  { transform: scaleX(-1) translateY(2px) rotate(3deg); }
-    50%  { transform: scaleX(-1) translateY(-8px) rotate(-3deg); }
-    70%  { transform: scaleX(-1) translateY(1px) rotate(4deg); }
-    85%  { transform: scaleX(-1) translateY(-3px) rotate(-2deg); }
+    15%  { transform: scaleX(-1) translateY(-4px) rotate(-3deg); }
+    40%  { transform: scaleX(-1) translateY(0px) rotate(2deg); }
+    55%  { transform: scaleX(-1) translateY(-5px) rotate(-2deg); }
+    75%  { transform: scaleX(-1) translateY(-1px) rotate(3deg); }
+    90%  { transform: scaleX(-1) translateY(-2px) rotate(-1deg); }
   }
   /* 尘土粒子 */
   #pikaWrapper .pika-dust {
@@ -316,7 +316,7 @@ tailwind.config = {
           <!-- 已过赛道填充 -->
           <div class="pika-track-fill" id="pikaTrackFill" style="width: 0%;"></div>
           <!-- 里程碑节点 -->
-          <div class="absolute inset-0 flex items-center px-4 z-10" id="pikaDots">
+          <div class="absolute inset-x-0 bottom-2 flex items-end px-4 z-10" id="pikaDots">
           </div>
           <!-- 地面 -->
           <div class="absolute bottom-1 left-3 right-12 h-1 bg-amber-800/20 rounded-full z-0"></div>
