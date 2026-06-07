@@ -149,10 +149,46 @@ tailwind.config = {
   }
 
   /* 皮卡丘奔跑 */
-  .pika-run { animation: pikaRun 0.3s ease-in-out infinite; }
-  @keyframes pikaRun {
+  .pika-run-sprite {
+    animation: pikaBounce 0.25s ease-in-out infinite;
+  }
+  @keyframes pikaBounce {
     0%, 100% { transform: scaleX(-1) translateY(0); }
-    50% { transform: scaleX(-1) translateY(-4px); }
+    15%  { transform: scaleX(-1) translateY(-6px) rotate(-4deg); }
+    35%  { transform: scaleX(-1) translateY(2px) rotate(3deg); }
+    50%  { transform: scaleX(-1) translateY(-8px) rotate(-3deg); }
+    70%  { transform: scaleX(-1) translateY(1px) rotate(4deg); }
+    85%  { transform: scaleX(-1) translateY(-3px) rotate(-2deg); }
+  }
+  /* 尘土粒子 */
+  #pikaWrapper .pika-dust {
+    position: absolute;
+    bottom: -2px;
+    left: 20px;
+    font-size: 10px;
+    color: #c4a474;
+    opacity: 0;
+    animation: dustKick 0.5s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes dustKick {
+    0% { opacity: 0.6; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(16px, -8px) scale(0.2); }
+  }
+  /* 里程碑小圆点 */
+  .pika-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #d4c8a0;
+    border: 1.5px solid #c4b478;
+    transition: all 0.3s ease;
+    flex: 1;
+    position: relative;
+  }
+  .pika-dot.done {
+    background: #f4c542;
+    border-color: #e8a820;
+    box-shadow: 0 0 6px rgba(244,197,66,.5);
   }
   .pika-track::after {
     content: '';
@@ -167,6 +203,15 @@ tailwind.config = {
     right: 4px; bottom: 2px;
     font-size: 18px;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,.2));
+  }
+  /* 赛道已过部分 */
+  .pika-track-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: linear-gradient(90deg, rgba(244,197,66,.15) 0%, rgba(244,197,66,.05) 100%);
+    border-radius: 999px;
+    transition: width 0.5s ease-out;
+    pointer-events: none;
   }
 
   /* Canvas 锐利渲染 */
@@ -186,6 +231,9 @@ tailwind.config = {
     .progress-text { font-size: 0.72em; }
     .dim-label { width: 3.5rem !important; font-size: 0.7em !important; }
     .btn { padding: 10px 20px !important; font-size: 0.85em !important; }
+    .pika-dot { width: 5px !important; height: 5px !important; }
+    .pika-run-sprite { width: 32px !important; height: 32px !important; }
+    #pikaTrack { height: 40px !important; }
     .archives-grid { grid-template-columns: repeat(3, 1fr) !important; max-width: 100%; }
     .archives-grid > * { min-width: 0; overflow: hidden; }
     .archives-grid img { width: 36px !important; height: 36px !important; }
@@ -264,13 +312,24 @@ tailwind.config = {
           <span id="qLabel">第 1 / 30 题</span>
           <span id="qPercent">0%</span>
         </div>
-        <div class="relative w-full h-12 bg-base-200/60 rounded-full overflow-hidden border border-base-300/30" id="pikaTrack">
-          <!-- 地面虚线 -->
-          <div class="absolute bottom-2 left-3 right-12 border-t-2 border-dashed border-base-content/10"></div>
+        <div class="relative w-full h-14 bg-gradient-to-r from-amber-50 via-amber-100/50 to-amber-50 rounded-full overflow-hidden border-2 border-amber-300/40 shadow-inner" id="pikaTrack">
+          <!-- 已过赛道填充 -->
+          <div class="pika-track-fill" id="pikaTrackFill" style="width: 0%;"></div>
+          <!-- 里程碑节点 -->
+          <div class="absolute inset-0 flex items-center px-4 z-10" id="pikaDots">
+          </div>
+          <!-- 地面 -->
+          <div class="absolute bottom-1 left-3 right-12 h-1 bg-amber-800/20 rounded-full z-0"></div>
           <!-- 皮卡丘 -->
-          <img src="sprites/25.png" id="pikaRunner" alt="皮卡丘"
-               class="absolute w-8 h-8 object-contain transition-all duration-500 ease-out pika-run"
-               style="left: 0%; bottom: 6px; transform: scaleX(-1);">
+          <div class="absolute bottom-0 transition-all duration-500 ease-out" id="pikaWrapper" style="left: 0%;">
+            <img src="sprites/25.png" id="pikaRunner" alt="皮卡丘"
+                 class="object-contain pika-run-sprite"
+                 style="width: 48px; height: 48px; image-rendering: pixelated;">
+            <!-- 奔跑尘土 -->
+            <span class="pika-dust" style="animation-delay: 0s;">·</span>
+            <span class="pika-dust" style="animation-delay: 0.15s;">·</span>
+            <span class="pika-dust" style="animation-delay: 0.3s;">·</span>
+          </div>
           <!-- 🚩 终点 -->
           <span class="finish-flag">🚩</span>
         </div>
@@ -669,12 +728,34 @@ function startQuiz() {
 
 function renderQuestion() {
   const q = QUESTIONS[currentQ];
+  // 初始化皮卡丘赛道节点（仅一次）
+  if (!document.getElementById('dot0')) {
+    const dots = document.getElementById('pikaDots');
+    for (let i = 0; i < 30; i++) {
+      const dot = document.createElement('span');
+      dot.className = 'pika-dot';
+      dot.id = 'dot' + i;
+      dot.title = '第' + (i + 1) + '题';
+      dots.appendChild(dot);
+    }
+  }
+
   document.getElementById('qLabel').textContent = `第 ${currentQ + 1} / 30 题`;
   document.getElementById('qPercent').textContent = Math.round((currentQ / 30) * 100) + '%';
   // 皮卡丘奔跑位置
-  const pika = document.getElementById('pikaRunner');
   const pct = currentQ / 30;
-  pika.style.left = `calc(${pct * 100}% - ${pct * 32}px)`;
+  const wrapper = document.getElementById('pikaWrapper');
+  wrapper.style.left = `calc(${pct * 100}% - ${4 + pct * 52}px)`;
+  // 已过赛道
+  document.getElementById('pikaTrackFill').style.width = (pct * 100) + '%';
+  // 里程碑节点
+  for (let i = 0; i < 30; i++) {
+    const dot = document.getElementById('dot' + i);
+    if (dot) {
+      if (i < currentQ) dot.classList.add('done');
+      else dot.classList.remove('done');
+    }
+  }
   document.getElementById('qBadge').textContent = 'Q' + (currentQ + 1);
   document.getElementById('qText').textContent = q.q;
 
