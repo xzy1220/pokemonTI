@@ -161,7 +161,7 @@ tailwind.config = {
   /* 尘土粒子 */
   #pikaWrapper .pika-dust {
     position: absolute;
-    bottom: -2px;
+    bottom: 4px;
     left: 20px;
     font-size: 10px;
     color: #c4a474;
@@ -314,12 +314,12 @@ tailwind.config = {
           <!-- 已过赛道填充 -->
           <div class="pika-track-fill" id="pikaTrackFill" style="width: 0%;"></div>
           <!-- 里程碑节点 -->
-          <div class="absolute inset-x-0 bottom-2 flex items-end px-4 z-10" id="pikaDots">
+          <div class="absolute inset-x-0 top-2 flex items-start px-4 z-10" id="pikaDots">
           </div>
-          <!-- 地面 -->
-          <div class="absolute bottom-1 left-3 right-12 h-1 bg-amber-800/20 rounded-full z-0"></div>
+          <!-- 地面（延伸到棋子下方） -->
+          <div class="absolute bottom-1 left-0 right-0 h-1 bg-amber-800/20 rounded-full z-0"></div>
           <!-- 皮卡丘 -->
-          <div class="absolute bottom-0 transition-all duration-500 ease-out" id="pikaWrapper" style="left: 0%;">
+          <div class="absolute bottom-2 transition-all duration-500 ease-out" id="pikaWrapper" style="left: 0%;">
             <img src="sprites/25.png" id="pikaRunner" alt="皮卡丘"
                  class="object-contain pika-run-sprite"
                  style="width: 48px; height: 48px; image-rendering: pixelated;">
