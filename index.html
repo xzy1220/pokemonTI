@@ -643,7 +643,7 @@ function renderQuestion() {
   // 皮卡丘位置
   const pct = currentQ / 30;
   const wrapper = document.getElementById('pikaWrapper');
-  wrapper.style.left = `calc(${pct * 100}% - ${6 + pct * 50}px)`;
+  wrapper.style.left = `calc(${pct * 100}% - 24px)`;
   document.getElementById('qBadge').textContent = 'Q' + (currentQ + 1);
   document.getElementById('qText').textContent = q.q;
 
