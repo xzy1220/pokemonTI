@@ -213,8 +213,8 @@ tailwind.config = {
     .dim-label { width: 3.5rem !important; font-size: 0.7em !important; }
     .btn { padding: 10px 20px !important; font-size: 0.85em !important; }
     .pika-dot { width: 5px !important; height: 5px !important; }
-    #pikaRunner { width: 32px !important; height: 32px !important; }
-    #pikaTrack { height: 40px !important; }
+    #pikaRunner { width: 48px !important; height: 48px !important; }
+    #pikaTrack { height: 52px !important; }
     .archives-grid { grid-template-columns: repeat(3, 1fr) !important; max-width: 100%; }
     .archives-grid > * { min-width: 0; overflow: hidden; }
     .archives-grid img { width: 36px !important; height: 36px !important; }
@@ -293,7 +293,7 @@ tailwind.config = {
           <span id="qLabel">第 1 / 30 题</span>
           <span id="qPercent">0%</span>
         </div>
-        <div class="relative w-full h-14 bg-gradient-to-r from-amber-50 via-amber-100/50 to-amber-50 rounded-full overflow-hidden border-2 border-amber-300/40 shadow-inner" id="pikaTrack">
+        <div class="relative w-full h-20 bg-gradient-to-r from-amber-50 via-amber-100/50 to-amber-50 rounded-full overflow-hidden border-2 border-amber-300/40 shadow-inner" id="pikaTrack">
           <!-- 已过赛道填充 -->
           <div class="pika-track-fill" id="pikaTrackFill" style="width: 0%;"></div>
           <!-- 里程碑节点 -->
@@ -305,7 +305,7 @@ tailwind.config = {
           <div class="absolute bottom-2 transition-all duration-500 ease-out" id="pikaWrapper" style="left: 0%;">
             <img src="皮卡丘奔跑gif/透明背景-二次元_跑步-右1-进度条标识_爱给网_aigei_com.gif" id="pikaRunner" alt="皮卡丘"
                  class="object-contain"
-                 style="width: 48px; height: 48px; image-rendering: auto;">
+                 style="width: 72px; height: 72px; image-rendering: auto;">
             <!-- 奔跑尘土 -->
             <span class="pika-dust" style="animation-delay: 0s;">·</span>
             <span class="pika-dust" style="animation-delay: 0.15s;">·</span>
@@ -726,7 +726,7 @@ function renderQuestion() {
   // 皮卡丘奔跑位置
   const pct = currentQ / 30;
   const wrapper = document.getElementById('pikaWrapper');
-  wrapper.style.left = `calc(${pct * 100}% - ${4 + pct * 52}px)`;
+  wrapper.style.left = `calc(${pct * 100}% - ${6 + pct * 76}px)`;
   // 已过赛道
   document.getElementById('pikaTrackFill').style.width = (pct * 100) + '%';
   // 里程碑节点
